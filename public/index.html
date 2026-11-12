@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BiblioWeb | Biblioteca digital</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head><body>
+<header class="topbar">
+ <div class="brand"><span class="logo">▤</span><div><strong>BiblioWeb</strong><small>Biblioteca digital</small></div></div>
+ <nav id="navUser" class="hidden"><span id="hello"></span><button id="btnLogout" class="btn-outline">Sair</button></nav>
+</header>
+<main class="layout">
+ <section id="authView" class="auth-layout">
+  <div class="hero">
+   <div class="eyebrow">PROJETO DE PROGRAMAÇÃO WEB AVANÇADA</div>
+   <h1>Seu próximo livro começa aqui.</h1>
+   <p>Uma biblioteca completa para encontrar livros, acompanhar empréstimos e organizar o acervo.</p>
+   <div class="hero-badges"><span>API REST</span><span>MVC + DAO</span><span>2 níveis de acesso</span></div>
+  </div>
+  <div class="panel auth-panel">
+    <div class="tabbar"><button class="tab active" data-auth-tab="login">Entrar</button><button class="tab" data-auth-tab="register">Criar conta</button></div>
+    <form id="formLogin" class="stack">
+      <h2>Bem-vindo de volta</h2><p class="muted">Acesse sua conta para continuar.</p>
+      <label>E-mail<input name="email" type="email" placeholder="voce@email.com" required autocomplete="email"></label>
+      <label>Senha<input name="password" type="password" required autocomplete="current-password"></label>
+      <button class="btn-primary" type="submit">Entrar</button>
+    </form>
+    <form id="formRegister" class="stack hidden">
+      <h2>Crie sua conta</h2><p class="muted">Faça empréstimos e acompanhe sua leitura.</p>
+      <label>Nome<input name="name" required minlength="2" maxlength="100" autocomplete="name"></label>
+      <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
+      <label>Senha (mínimo 8 caracteres)<input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+      <button class="btn-primary" type="submit">Cadastrar</button>
+    </form>
+  </div>
+ </section>
+ <section id="appView" class="hidden">
+  <div class="page-head"><div><span class="eyebrow">PAINEL DA BIBLIOTECA</span><h1>Explore o catálogo</h1><p class="muted">Encontre livros disponíveis e acompanhe seus empréstimos.</p></div><span id="roleBadge" class="pill"></span></div>
+  <div class="stats"><div class="stat panel"><span>Livros cadastrados</span><strong id="statBooks">—</strong></div><div class="stat panel"><span>Exemplares disponíveis</span><strong id="statAvailable">—</strong></div><div class="stat panel"><span>Empréstimos ativos</span><strong id="statLoans">—</strong></div></div>
+  <div class="tabbar main-tabs"><button class="tab active" data-section="catalog">Catálogo</button><button class="tab" data-section="loans">Empréstimos</button><button class="tab hidden" data-section="admin">Administração</button></div>
+  <section id="catalogSection" class="panel view-section"><div class="section-head"><h2>Livros disponíveis</h2><input id="searchBooks" type="search" placeholder="Buscar por título, autor, categoria..."></div><div id="booksGrid" class="books-grid"></div></section>
+  <section id="loansSection" class="panel view-section hidden"><div class="section-head"><h2>Controle de empréstimos</h2><button id="refreshLoans" class="btn-outline">Atualizar</button></div><div id="loansList" class="table-wrap"></div></section>
+  <section id="adminSection" class="panel view-section hidden"><div class="section-head"><h2>Gerenciar acervo</h2><p class="muted">Disponível somente para administradores</p></div>
+    <form id="formBook" class="book-form"><input type="hidden" name="id"><label>Título<input name="title" placeholder="Título do livro" maxlength="180" required></label><label>Autor<input name="author" placeholder="Autor" maxlength="120" required></label><label>Categoria<input name="category" placeholder="Categoria" maxlength="80" required></label><label>Exemplares<input name="totalCopies" type="number" min="0" max="9999" required></label><button class="btn-primary" type="submit" id="saveBook">Adicionar livro</button><button class="btn-outline hidden" type="button" id="cancelEdit">Cancelar</button></form>
+    <div id="adminBooks" class="table-wrap"></div>
+  </section>
+ </section>
+</main><div id="toast" role="status" class="toast hidden"></div>
+<footer>Projeto acadêmico • Programação para Web Avançada</footer>
+</body></html>

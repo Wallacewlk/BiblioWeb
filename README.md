@@ -1,194 +1,974 @@
-# BiblioWeb — Projeto Semestral de Programação para Web Avançada
 
-Sistema de gerenciamento de biblioteca com dois perfis autenticados. Desenvolvido com **Node.js, Express, HTML/CSS/JS, Sequelize ORM, sessões/cookies, banco relacional e API REST**.
+# 📚 BiblioWeb — Sistema de Gerenciamento de Biblioteca
 
-## 1. Funcionalidades
+**Trabalho Semestral — Programação para Web Avançada**
 
-**Cliente (CLIENTE):** cadastro, login, catálogo, busca, empréstimo de exemplar disponível, histórico pessoal, devolução do próprio livro.
+Universidade Federal de Mato Grosso do Sul (UFMS)
 
-**Administrador (ADMIN):** login restrito, consulta ao catálogo, cadastro/edição/desativação/reativação de livros, listagem de todos os empréstimos, devolução de empréstimos. Admin só é criado pela variável de ambiente `ADMIN_EMAIL`/`ADMIN_PASSWORD`; cadastrar-se pelo site nunca dá acesso administrativo.
+## 🌐 Aplicação publicada
 
-**Regras de negócio:** exemplar indisponível não pode ser emprestado, usuário não pode ter dois empréstimos ativos do mesmo livro, cliente não pode alterar livros ou empréstimos alheios, retirada de livro é lógica (`active=false`) para preservar histórico e exemplares disponíveis são incrementados na devolução.
+O BiblioWeb está disponível na internet, com frontend, backend e banco de dados PostgreSQL hospedados na plataforma Render.
 
-## 2. Tecnologia e arquitetura
+| Recurso | Endereço |
+|---|---|
+| Aplicação Web | https://biblioweb-wallace.onrender.com |
+| Repositório GitHub | https://github.com/Wallacewlk/BiblioWeb |
+| API — Health Check | https://biblioweb-wallace.onrender.com/api/health |
 
-- Node.js 20+ / Express 4 — servidor HTTP e API REST.
-- HTML5, CSS3, JavaScript puro — frontend responsivo usando `fetch`.
-- Sequelize 6 (ORM, camada DAO) — SQLite para desenvolver localmente, PostgreSQL quando `DATABASE_URL` existe.
-- bcryptjs — hash de senha; express-session + connect-session-sequelize — sessão persistida no banco de dados com cookie HTTP-only.
-- cors — configura explicitamente origens autorizadas para consumir a API a partir de porta separada.
-- helmet — cabeçalhos de proteção HTTP.
+**Status do projeto:** Publicado no Render.
 
-### Diagrama simplificado (MVC + DAO)
+> A aplicação utiliza hospedagem gratuita e pode apresentar demora no primeiro acesso após um período de inatividade.
+
+---
+
+## 1. Sobre o projeto
+
+O BiblioWeb é uma aplicação web desenvolvida para gerenciar o acervo e os empréstimos de uma biblioteca.
+
+O sistema permite que usuários consultem livros, solicitem empréstimos e realizem devoluções. Administradores possuem funcionalidades adicionais para gerenciamento do catálogo e acompanhamento dos empréstimos.
+
+O projeto foi desenvolvido como atividade avaliativa da disciplina de Programação para Web Avançada, aplicando conceitos de desenvolvimento frontend e backend, protocolo HTTP, API REST, arquitetura MVC, persistência de dados e autenticação.
+
+### Objetivos
+
+- Desenvolver uma aplicação web completa.
+- Implementar uma API REST utilizando Node.js e Express.
+- Aplicar a arquitetura MVC e o padrão DAO.
+- Utilizar um banco de dados relacional.
+- Implementar autenticação com sessões e cookies.
+- Diferenciar permissões de clientes e administradores.
+- Configurar CORS e códigos de resposta HTTP.
+- Publicar a aplicação em um servidor remoto.
+- Utilizar Git e GitHub para versionamento.
+
+---
+
+## 2. Funcionalidades
+
+### 2.1. Cliente (CLIENTE)
+
+O cliente possui acesso às funcionalidades:
+
+- Cadastro de conta.
+- Login e logout.
+- Consulta ao catálogo de livros.
+- Pesquisa por livros.
+- Visualização da disponibilidade.
+- Solicitação de empréstimos.
+- Consulta aos próprios empréstimos.
+- Visualização do histórico.
+- Devolução de livros emprestados.
+
+### 2.2. Administrador (ADMIN)
+
+O administrador possui acesso às funcionalidades:
+
+- Login administrativo.
+- Cadastro de novos livros.
+- Edição de informações dos livros.
+- Alteração da quantidade de exemplares.
+- Desativação de livros.
+- Reativação de livros.
+- Consulta ao catálogo completo.
+- Consulta a todos os empréstimos.
+- Registro de devoluções.
+- Gerenciamento do acervo.
+
+### 2.3. Regras de negócio
+
+O sistema implementa as seguintes regras:
+
+1. Não é permitido emprestar livros sem exemplares disponíveis.
+2. Um cliente não pode manter dois empréstimos ativos do mesmo livro.
+3. Um cliente não pode devolver livros emprestados por outros usuários.
+4. Apenas administradores podem cadastrar, editar ou remover livros.
+5. A exclusão de livros é lógica, preservando o histórico.
+6. A devolução aumenta a quantidade de exemplares disponíveis.
+7. O cadastro público cria usuários exclusivamente com o perfil CLIENTE.
+8. As permissões são verificadas no backend, não apenas na interface.
+
+---
+
+## 3. Tecnologias utilizadas
+
+### Frontend
+
+- HTML5
+- CSS3
+- JavaScript
+- Fetch API
+- Layout responsivo
+
+### Backend
+
+- Node.js
+- Express.js
+- API REST
+- Arquitetura MVC
+- Padrão DAO
+- Middlewares
+
+### Banco de dados
+
+- PostgreSQL — ambiente de produção.
+- SQLite — ambiente de desenvolvimento.
+- Sequelize ORM — mapeamento objeto-relacional.
+
+### Autenticação e segurança
+
+- bcryptjs — criptografia hash de senhas.
+- express-session — gerenciamento de sessões.
+- connect-session-sequelize — persistência das sessões.
+- cors — controle de origens permitidas.
+- helmet — configuração de cabeçalhos HTTP de segurança.
+
+### Ferramentas
+
+- Visual Studio Code
+- Git
+- GitHub
+- Render
+- npm
+
+---
+
+## 4. Arquitetura do sistema
+
+O projeto utiliza a arquitetura MVC, com separação de responsabilidades e uma camada DAO para acesso aos dados.
+
+### 4.1. Model
+
+Responsável pela representação e estrutura dos dados da aplicação.
+
+As entidades são definidas utilizando Sequelize ORM.
+
+### 4.2. View / Response
+
+O frontend apresenta a interface gráfica ao usuário.
+
+No backend, a camada View/Response corresponde às respostas HTTP geradas pelos controllers, normalmente em JSON.
+
+### 4.3. Controller
+
+Recebe as requisições HTTP, valida os dados e executa as operações necessárias.
+
+Os controllers utilizam a camada DAO para acessar o banco de dados.
+
+### 4.4. DAO — Data Access Object
+
+Responsável pela comunicação com a camada de persistência.
+
+O padrão DAO separa as operações de acesso aos dados das regras de negócio.
+
+### 4.5. Diagrama simplificado
 
 ```text
-Navegador / public (front-end: View visual)
-     | HTTP/JSON + cookie de sessão
-     v
-Express /api/routes
-     | middleware requireAuth / requireAdmin
-     v
-Controllers  <---- respostas JSON (View/Response da API)
-     |
-     v
-DAOs (UserDao, BookDao, LoanDao)
-     |
-     v
-Models Sequelize (User, Book, Loan)
-     |
-     v
-SQLite (local) ou PostgreSQL (nuvem)
+            USUÁRIO
+               |
+               v
+     FRONTEND (HTML/CSS/JS)
+               |
+        HTTP / Fetch API
+               |
+               v
+       EXPRESS / API REST
+               |
+       ROTAS E MIDDLEWARES
+               |
+               v
+          CONTROLLERS
+               |
+               v
+              DAO
+               |
+               v
+         SEQUELIZE ORM
+               |
+               v
+        BANCO DE DADOS
+       SQLite / PostgreSQL
 ```
 
-### Modelo de dados (relacional)
+---
 
-- `User` **1:N** `Loan` (`userId`): nome, e-mail, hash da senha, perfil (`CLIENTE`/`ADMIN`).
-- `Book` **1:N** `Loan` (`bookId`): título, autor, categoria, exemplares totais/disponíveis, ativo.
-- `Loan`: cliente, livro, status (`EMPRESTADO` ou `DEVOLVIDO`), criação e devolução.
-- `Sessions`: tabela do controle de sessão do `connect-session-sequelize`.
+## 5. Modelagem do banco de dados
 
-## 3. Estrutura de pastas
+O sistema utiliza banco de dados relacional com as seguintes entidades principais.
+
+### 5.1. User
+
+Representa os usuários cadastrados.
+
+Principais atributos:
+
+- id
+- name
+- email
+- passwordHash
+- role
+
+O atributo role identifica o nível de acesso:
+
+- CLIENTE
+- ADMIN
+
+### 5.2. Book
+
+Representa os livros cadastrados.
+
+Principais atributos:
+
+- id
+- title
+- author
+- category
+- totalCopies
+- availableCopies
+- active
+
+O campo active permite a desativação lógica dos livros.
+
+### 5.3. Loan
+
+Representa os empréstimos realizados.
+
+Principais atributos:
+
+- id
+- userId
+- bookId
+- status
+- returnedAt
+
+Os principais estados são:
+
+- EMPRESTADO
+- DEVOLVIDO
+
+### 5.4. Sessions
+
+Tabela utilizada para persistir as sessões autenticadas dos usuários.
+
+### 5.5. Relacionamentos
+
+- Um usuário pode possuir vários empréstimos.
+- Um livro pode aparecer em vários empréstimos.
+- Cada empréstimo pertence a um usuário.
+- Cada empréstimo está associado a um livro.
+
+```text
+USER (1) -------- (N) LOAN
+                         |
+                         |
+                         N
+                         |
+                         1
+                        BOOK
+```
+
+---
+
+## 6. Estrutura de pastas
 
 ```text
 BiblioWeb/
-├── .env.example
-├── .gitignore
-├── package.json
-├── public/
-│   ├── index.html                # interface visual
-│   ├── app.js                    # fetch/API e interações
-│   └── styles.css                # layout responsivo
-├── src/
-│   ├── config/database.js       # conexão SQLite ou PostgreSQL
-│   ├── models/index.js          # models/tabelas e relacionamentos
-│   ├── dao/                     # camada de acesso ao banco
-│   ├── controllers/             # regras e respostas JSON
-│   ├── middlewares/auth.js      # autenticação e autorização
-│   ├── routes/index.js          # endpoints REST
-│   ├── services/seed.js         # admin e acervo inicial
-│   └── server.js                # Express, CORS, cookies e deploy
-├── scripts/frontend-server.js  # frontend na porta 5500 (opcional)
-└── data/                       # SQLite local não versionado
+|
+|-- public/
+|   |-- index.html
+|   |-- app.js
+|   |-- styles.css
+|
+|-- src/
+|   |-- config/
+|   |   |-- database.js
+|   |
+|   |-- controllers/
+|   |   |-- authController.js
+|   |   |-- bookController.js
+|   |   |-- loanController.js
+|   |
+|   |-- dao/
+|   |   |-- userDao.js
+|   |   |-- bookDao.js
+|   |   |-- loanDao.js
+|   |
+|   |-- middlewares/
+|   |   |-- auth.js
+|   |
+|   |-- models/
+|   |   |-- index.js
+|   |
+|   |-- routes/
+|   |   |-- index.js
+|   |
+|   |-- services/
+|   |   |-- seed.js
+|   |
+|   |-- server.js
+|
+|-- scripts/
+|   |-- frontend-server.js
+|   |-- smoke-test.js
+|
+|-- data/
+|-- .env.example
+|-- .gitignore
+|-- package.json
+|-- README.md
 ```
 
-## 4. Rodar no computador (Windows)
+### Descrição das principais pastas
 
-1. Instale **Node.js LTS** (20 ou superior) e extraia o projeto.
-2. Abra a pasta `BiblioWeb` no VS Code ou no terminal.
-3. Instale dependências: `npm install`
-4. Copie `.env.example` para `.env` (no PowerShell: `Copy-Item .env.example .env`).
-5. **Edite `.env`** e substitua `SESSION_SECRET` por uma chave longa e aleatória (>=32 caracteres); personalize `ADMIN_PASSWORD` com pelo menos 12 caracteres. Defina um `ADMIN_EMAIL` que você usará na demonstração.
-6. Execute `npm start` (ou `npm run dev` para reiniciar automaticamente quando alterar código).
-7. Acesse **http://localhost:3000/**, crie um cliente; para administrador use o e-mail/senha colocados no `.env`.
-8. Teste a saúde da API em **http://localhost:3000/api/health**.
-9. Em outro terminal, execute `npm run smoke` para testar automaticamente cadastro, sessão, permissões, empréstimo, devolução e CRUD do administrador. **Esse teste cria registros de demonstração no banco local.**
+**public:** arquivos utilizados na interface visual.
 
-**Para mostrar CORS entre portas distintas:** com backend já rodando na 3000, abra outro terminal na mesma pasta e execute `npm run front`. Entre em **http://localhost:5500/**. O frontend passa a consumir a API na porta 3000 usando cookies e CORS. Em produção, o frontend é servido pelo mesmo Express, evitando problemas de cookies de terceiros.
+**controllers:** tratamento das requisições e respostas HTTP.
 
-**Observação:** A senha do administrador inicial é gerada na primeira inicialização. Alterar `ADMIN_PASSWORD` no `.env` depois não atualiza automaticamente uma conta já criada. Para redefinição de demo, recrie o banco de desenvolvimento (isso apaga os dados locais) ou implemente fluxo seguro de troca de senha.
+**dao:** operações de acesso aos dados.
 
-## 5. Endpoints REST (requer JSON e cookie de sessão após login)
+**models:** definição das entidades e relacionamentos.
 
-| Método | Rota | Acesso | Descrição |
-| --- | --- | --- | --- |
-| GET | `/api/health` | Público | Verificar serviço |
-| POST | `/api/auth/register` | Público | Criar usuário CLIENTE |
-| POST | `/api/auth/login` | Público | Login e gerar sessão |
-| GET | `/api/auth/me` | Autenticado | Identificar usuário atual |
-| POST | `/api/auth/logout` | Autenticado | Encerrar sessão |
-| GET | `/api/books?search=dom` | Autenticado | Listar/buscar catálogo |
-| GET | `/api/books/:id` | Autenticado | Detalhes do livro |
-| POST | `/api/books` | ADMIN | Cadastrar livro |
-| PUT/PATCH | `/api/books/:id` | ADMIN | Alterar livro |
-| DELETE | `/api/books/:id` | ADMIN | Desativar livro (exclusão lógica) |
-| GET | `/api/loans` | Autenticado | Próprios empréstimos (ADMIN vê todos) |
-| POST | `/api/loans` | Autenticado | Emprestar exemplar |
-| PATCH | `/api/loans/:id/return` | Dono/ADMIN | Devolver exemplar |
+**middlewares:** autenticação e controle de permissões.
 
-**Exemplo — cadastrar cliente (POST /api/auth/register):**
+**routes:** definição dos endpoints REST.
+
+**services:** serviços auxiliares e inicialização dos dados.
+
+**config:** conexão e configuração do banco de dados.
+
+**scripts:** scripts auxiliares e testes automatizados.
+
+---
+
+## 7. Instalação e execução local
+
+### 7.1. Pré-requisitos
+
+Para executar o sistema localmente, são necessários:
+
+- Node.js 20 ou superior.
+- npm.
+- Visual Studio Code ou editor equivalente.
+- Git, caso deseje clonar o repositório.
+
+### 7.2. Clonar o repositório
+
+```bash
+git clone https://github.com/Wallacewlk/BiblioWeb.git
+```
+
+Entrar na pasta:
+
+```bash
+cd BiblioWeb
+```
+
+### 7.3. Instalar dependências
+
+```bash
+npm install
+```
+
+### 7.4. Configurar variáveis de ambiente
+
+No Windows CMD:
+
+```cmd
+copy .env.example .env
+```
+
+Edite o arquivo `.env` com suas configurações locais.
+
+Exemplo de estrutura:
+
+```env
+PORT=3000
+NODE_ENV=development
+SESSION_SECRET=COLOQUE_UMA_CHAVE_ALEATORIA_COM_32_OU_MAIS_CARACTERES
+ADMIN_EMAIL=admin@biblioweb.local
+ADMIN_PASSWORD=DEFINA_UMA_SENHA_FORTE_COM_12_OU_MAIS_CARACTERES
+ADMIN_NAME=Administrador
+DATABASE_SSL=false
+FRONTEND_ORIGIN=http://localhost:5500,http://127.0.0.1:5500
+```
+
+Os valores apresentados são ilustrativos e devem ser substituídos antes da execução.
+
+Sem `DATABASE_URL`, o sistema utiliza SQLite local.
+
+**Importante:** nunca publique o arquivo `.env` com senhas ou dados de conexão.
+
+### 7.5. Iniciar o servidor
+
+```bash
+npm start
+```
+
+A aplicação estará disponível em:
+
+http://localhost:3000
+
+Para verificar a API:
+
+http://localhost:3000/api/health
+
+### 7.6. Executar em modo de desenvolvimento
+
+```bash
+npm run dev
+```
+
+### 7.7. Testar frontend e backend em portas diferentes
+
+Com o backend funcionando na porta 3000, execute em outro terminal:
+
+```bash
+npm run front
+```
+
+Acesse:
+
+http://localhost:5500
+
+Essa configuração permite demonstrar o funcionamento do CORS entre frontend e backend em portas distintas.
+
+---
+
+## 8. Documentação da API REST
+
+A API utiliza JSON para comunicação entre o frontend e o backend.
+
+URL de produção:
+
+https://biblioweb-wallace.onrender.com/api
+
+### 8.1. Autenticação
+
+| Método | Endpoint | Descrição | Acesso |
+|---|---|---|---|
+| POST | /api/auth/register | Cadastrar cliente | Público |
+| POST | /api/auth/login | Realizar login | Público |
+| POST | /api/auth/logout | Encerrar sessão | Autenticado |
+| GET | /api/auth/me | Consultar usuário atual | Autenticado |
+
+### 8.2. Gerenciamento de livros
+
+| Método | Endpoint | Descrição | Acesso |
+|---|---|---|---|
+| GET | /api/books | Listar livros | Autenticado |
+| GET | /api/books/:id | Consultar livro | Autenticado |
+| POST | /api/books | Cadastrar livro | ADMIN |
+| PUT | /api/books/:id | Atualizar livro | ADMIN |
+| PATCH | /api/books/:id | Atualizar parcialmente | ADMIN |
+| DELETE | /api/books/:id | Desativar livro | ADMIN |
+
+A rota de listagem também aceita busca:
+
+```http
+GET /api/books?search=dom
+```
+
+### 8.3. Gerenciamento de empréstimos
+
+| Método | Endpoint | Descrição | Acesso |
+|---|---|---|---|
+| GET | /api/loans | Listar empréstimos | Autenticado |
+| POST | /api/loans | Realizar empréstimo | Autenticado |
+| PATCH | /api/loans/:id/return | Devolver livro | Dono ou ADMIN |
+
+### 8.4. Verificação da aplicação
+
+```http
+GET /api/health
+```
+
+Exemplo de resposta:
 
 ```json
-{"name":"Maria Souza","email":"maria@example.com","password":"SenhaForte123"}
+{
+  "ok": true,
+  "app": "BiblioWeb"
+}
 ```
 
-Resposta `201 Created` (o cookie `biblioweb.sid` é enviado no cabeçalho `Set-Cookie`):
+---
+
+## 9. Exemplos de requisições e respostas
+
+### 9.1. Cadastro de cliente
+
+**Requisição:**
+
+```http
+POST /api/auth/register
+Content-Type: application/json
+```
 
 ```json
-{"user":{"id":2,"name":"Maria Souza","email":"maria@example.com","role":"CLIENTE"}}
+{
+  "name": "Maria Souza",
+  "email": "maria@example.com",
+  "password": "SenhaForte123"
+}
 ```
 
-**Exemplo — cadastrar livro como ADMIN (POST /api/books):**
+**Resposta HTTP 201 Created:**
 
 ```json
-{"title":"Dom Casmurro","author":"Machado de Assis","category":"Literatura brasileira","totalCopies":3}
+{
+  "user": {
+    "id": 2,
+    "name": "Maria Souza",
+    "email": "maria@example.com",
+    "role": "CLIENTE"
+  }
+}
 ```
 
-Resposta `201 Created` (campos relevantes):
+O servidor estabelece uma sessão autenticada por meio de cookie.
+
+### 9.2. Login
+
+**Requisição:**
+
+```http
+POST /api/auth/login
+Content-Type: application/json
+```
 
 ```json
-{"id":5,"title":"Dom Casmurro","author":"Machado de Assis","category":"Literatura brasileira","totalCopies":3,"availableCopies":3,"active":true}
+{
+  "email": "maria@example.com",
+  "password": "SenhaForte123"
+}
 ```
 
-**Exemplo — empréstimo (POST /api/loans):**
+**Resposta HTTP 200 OK:**
 
 ```json
-{"bookId":5}
+{
+  "user": {
+    "id": 2,
+    "name": "Maria Souza",
+    "email": "maria@example.com",
+    "role": "CLIENTE"
+  }
+}
 ```
 
-Resposta `201 Created` (campos relevantes):
+### 9.3. Cadastro de livro
+
+Operação exclusiva do administrador.
+
+**Requisição:**
+
+```http
+POST /api/books
+Content-Type: application/json
+```
 
 ```json
-{"id":1,"userId":2,"bookId":5,"status":"EMPRESTADO","returnedAt":null}
+{
+  "title": "Dom Casmurro",
+  "author": "Machado de Assis",
+  "category": "Literatura Brasileira",
+  "totalCopies": 3
+}
 ```
 
-**Erros REST (JSON):** `400 Bad Request` para validação; `401 Unauthorized` para não autenticado; `403 Forbidden` para permissão negada; `404 Not Found` para recurso ausente; `409 Conflict` para conflito de cadastro ou disponibilidade; `500` para falhas inesperadas. Exemplo `403`:
+**Exemplo de resposta HTTP 201 Created:**
 
 ```json
-{"error":"Acesso exclusivo do administrador."}
+{
+  "id": 5,
+  "title": "Dom Casmurro",
+  "author": "Machado de Assis",
+  "category": "Literatura Brasileira",
+  "totalCopies": 3,
+  "availableCopies": 3,
+  "active": true
+}
 ```
 
-## 6. Deploy em nuvem (GitHub + Render + PostgreSQL)
+### 9.4. Empréstimo de livro
 
-> **Pendente de execução na sua conta:** este ZIP entrega o código e instruções, mas não cria automaticamente um repositório nem um link público. O deploy precisa ser feito e verificado na hospedagem.
+**Requisição:**
 
-1. Crie um repositório no GitHub e envie os arquivos **sem `.env`, nem `node_modules`, nem banco `.sqlite`**.
-2. Provisione uma instância de **PostgreSQL** no Render ou em provedor compatível e copie a URL de conexão do banco (`DATABASE_URL`). Os planos, limites e disponibilidade variam: consulte o painel do provedor.
-3. No Render, crie `New > Web Service` apontando para o repositório. Use ambiente **Node**, comando de instalação `npm install`, comando de inicialização `npm start`.
-4. Configure variáveis: `NODE_ENV=production`, `SESSION_SECRET` longo e aleatório, `ADMIN_EMAIL`, `ADMIN_PASSWORD` com 12+ caracteres, `DATABASE_URL`. Se o provedor exigir SSL, defina `DATABASE_SSL=true` (a verificação do certificado permanece ativa; confirme a CA confiável do seu provedor). O Render define `PORT` automaticamente.
-5. Se optar por frontend em domínio separado, inclua sua origem exata em `FRONTEND_ORIGIN` e revise a estratégia de cookies. **A opção recomendada nesta entrega é usar o frontend já integrado ao servidor Express** para evitar bloqueio de cookies entre domínios.
-6. Aguarde a inicialização, depois abra a URL fornecida e teste `/api/health`, login do cliente e do administrador, CRUD e empréstimo.
-7. Anexe os dois links na entrega: **Aplicação**: `https://SEU-SERVICO.onrender.com/`; **API**: `https://SEU-SERVICO.onrender.com/api/health` (substituir pela URL real). Isso disponibiliza frontend e backend no serviço remoto.
+```http
+POST /api/loans
+Content-Type: application/json
+```
 
-**Importante:** o banco SQLite do desenvolvimento não é adequado a hospedagens com filesystem efêmero, pois os dados podem ser perdidos a cada reinício. Use PostgreSQL persistente no deploy.
+```json
+{
+  "bookId": 5
+}
+```
 
-## 7. Demonstração em sala (até 20 minutos)
+**Exemplo de resposta HTTP 201 Created:**
 
-1. **2 min:** tema, objetivo e divisão de responsabilidades do grupo.
-2. **3 min:** camadas MVC + DAO, models e PostgreSQL/SQLite.
-3. **3 min:** HTTP, API REST, JSON, status code e configuração CORS.
-4. **5 min:** cadastro/login cliente, catálogo, empréstimo, devolução.
-5. **4 min:** login admin, cadastro/edição/desativação, autorização no backend; mostrar `403` se cliente tentar `POST /api/books`.
-6. **3 min:** links do deploy/GitHub, sessão e cookies no navegador, conclusões/perguntas.
+```json
+{
+  "id": 1,
+  "userId": 2,
+  "bookId": 5,
+  "status": "EMPRESTADO",
+  "returnedAt": null
+}
+```
 
-## 8. Checklist do enunciado
+### 9.5. Devolução de livro
 
-- [x] Código preparado com HTTP GET/POST/PUT/PATCH/DELETE e status adequados.
-- [x] Cookie e sessão persistida em banco.
-- [x] Model/View-Response/Controller separados no backend.
-- [x] DAO + Sequelize ORM + banco de dados real.
-- [x] API REST documentada e consumida via frontend.
-- [x] CORS explicitamente configurado, com teste em portas 5500/3000.
-- [x] Interface web responsiva, com cliente/admin e verificação de permissão backend.
-- [ ] Publicar o projeto remotamente e verificar seu funcionamento em conta de hospedagem.
-- [ ] Enviar código ao GitHub e compartilhar link.
-- [ ] Testar a apresentação do grupo e definir contribuições individuais.
+**Requisição:**
 
-## 9. Segurança e notas
+```http
+PATCH /api/loans/1/return
+```
 
-- Senhas armazenadas com bcrypt, nunca no banco em texto puro.
-- Usuários cliente jamais podem enviar `role=ADMIN` no cadastro: backend fixa perfil CLIENTE.
-- Sessões armazenadas no banco; cookie `httpOnly` e `secure` quando `NODE_ENV=production`.
-- Uso de `sameSite=lax`, indicado para frontend e backend da mesma origem (padrão de deploy incluído).
-- Em sistema real de grande porte: acrescentar prevenção CSRF robusta, rate limiting em login/cadastro, migrações versionadas e testes automatizados abrangentes. Em SSL, mantenha a verificação dos certificados e configure a autoridade certificadora de seu provedor quando necessário.
+A operação modifica o status do empréstimo para DEVOLVIDO e registra a data de devolução.
 
-*Projeto acadêmico de demonstração. Remova senhas de exemplo, não divulgue credenciais reais e valide as funcionalidades antes da avaliação.*
+A quantidade de exemplares disponíveis é atualizada no banco.
+
+---
+
+## 10. Protocolo HTTP e códigos de status
+
+O BiblioWeb utiliza os principais métodos HTTP:
+
+- GET: consulta de recursos.
+- POST: criação de registros e autenticação.
+- PUT: atualização de recursos.
+- PATCH: atualização parcial de recursos.
+- DELETE: desativação lógica de livros.
+
+### Códigos HTTP utilizados
+
+| Código | Significado |
+|---|---|
+| 200 | Requisição executada com sucesso |
+| 201 | Recurso criado |
+| 400 | Dados inválidos |
+| 401 | Usuário não autenticado |
+| 403 | Acesso não autorizado para o perfil |
+| 404 | Recurso não encontrado |
+| 409 | Conflito de dados ou regras de negócio |
+| 500 | Erro interno do servidor |
+
+### Exemplo de permissão negada
+
+Quando um cliente tenta executar uma operação administrativa:
+
+```http
+POST /api/books
+```
+
+O servidor retorna:
+
+```http
+403 Forbidden
+```
+
+```json
+{
+  "error": "Acesso exclusivo do administrador."
+}
+```
+
+Dessa forma, o controle de permissões não depende apenas da interface visual.
+
+---
+
+## 11. Autenticação, sessões e cookies
+
+A autenticação utiliza express-session e bcryptjs.
+
+O sistema verifica as credenciais enviadas pelo usuário e cria uma sessão autenticada.
+
+As sessões são persistidas no banco de dados por meio do connect-session-sequelize.
+
+### Características
+
+- Senhas armazenadas como hashes bcrypt.
+- Sessões persistidas no banco relacional.
+- Cookie de sessão HTTP-only.
+- Cookie Secure em ambiente de produção.
+- Configuração SameSite=Lax.
+- Verificação de autenticação nas rotas protegidas.
+- Validação do perfil ADMIN no backend.
+
+O cookie utilizado pela aplicação possui o nome:
+
+```text
+biblioweb.sid
+```
+
+O registro de administradores não está disponível no cadastro público.
+
+A conta administrativa é configurada pelo servidor utilizando variáveis de ambiente.
+
+---
+
+## 12. Configuração de CORS
+
+O BiblioWeb utiliza o middleware cors para permitir comunicação controlada entre origens diferentes.
+
+Em desenvolvimento, o frontend pode funcionar na porta 5500 enquanto a API utiliza a porta 3000.
+
+Exemplo:
+
+```text
+Frontend: http://localhost:5500
+Backend:  http://localhost:3000
+```
+
+A configuração permite utilizar requisições HTTP com cookies e credenciais entre as origens autorizadas.
+
+A variável FRONTEND_ORIGIN define as origens externas permitidas.
+
+No ambiente de produção, o frontend é servido pelo próprio Express, utilizando o mesmo domínio da API.
+
+Essa estratégia facilita o gerenciamento de cookies e sessões.
+
+---
+
+## 13. Publicação em nuvem
+
+A aplicação foi publicada na plataforma Render, com integração ao repositório GitHub.
+
+### 13.1. Serviço web
+
+- Plataforma: Render.
+- Aplicação: biblioweb-wallace.
+- Ambiente: Node.js.
+- Branch: main.
+- Build Command: npm install.
+- Start Command: npm start.
+- Health Check: /api/health.
+
+URL pública:
+
+https://biblioweb-wallace.onrender.com
+
+### 13.2. Banco de dados
+
+- Sistema gerenciador: PostgreSQL.
+- Plataforma: Render.
+- Nome do serviço: biblioweb-db.
+- Região: Ohio (US East).
+- Conexão: DATABASE_URL.
+
+A conexão interna do Render é utilizada para comunicação entre a aplicação e o banco.
+
+### 13.3. Variáveis de produção
+
+O serviço utiliza variáveis de ambiente para armazenar configurações sensíveis.
+
+| Variável | Finalidade |
+|---|---|
+| NODE_ENV | Ambiente de execução |
+| DATABASE_URL | Conexão PostgreSQL |
+| DATABASE_SSL | Configuração SSL do banco |
+| SESSION_SECRET | Chave de sessão |
+| ADMIN_EMAIL | E-mail administrativo |
+| ADMIN_PASSWORD | Senha administrativa |
+| ADMIN_NAME | Nome do administrador |
+| FRONTEND_ORIGIN | Origens CORS autorizadas, se necessário |
+
+As credenciais reais não são armazenadas no repositório.
+
+### 13.4. Atualizações
+
+O repositório utiliza a branch main.
+
+Novas versões são enviadas pelo Git:
+
+```bash
+git add .
+git commit -m "Descricao da alteracao"
+git push origin main
+```
+
+O Render está configurado para realizar publicações automáticas a partir de novos commits.
+
+---
+
+## 14. Testes e validação
+
+O projeto possui um script de testes automatizados para verificar as funcionalidades principais.
+
+Para executar:
+
+```bash
+npm run smoke
+```
+
+O script realiza verificações envolvendo:
+
+- Cadastro de usuários.
+- Login.
+- Sessões.
+- Permissões de cliente.
+- Permissões de administrador.
+- Cadastro e edição de livros.
+- Empréstimos.
+- Devoluções.
+- Respostas da API REST.
+
+Os testes automatizados foram executados e aprovados no ambiente local durante o desenvolvimento.
+
+Também foram realizados testes manuais no navegador, incluindo cadastro de livros, login, empréstimos e devoluções.
+
+**Observação:** os testes automatizados podem criar registros de demonstração. Recomenda-se executá-los em ambiente de desenvolvimento, e não diretamente na produção.
+
+---
+
+## 15. Testando o sistema
+
+### Teste como administrador
+
+1. Acesse a aplicação.
+2. Entre utilizando uma conta administrativa de demonstração fornecida de forma privada.
+3. Abra a área Administração.
+4. Cadastre um livro.
+5. Edite suas informações.
+6. Verifique a quantidade de exemplares.
+7. Consulte os empréstimos registrados.
+
+### Teste como cliente
+
+1. Saia da conta administrativa.
+2. Crie uma nova conta de cliente.
+3. Entre no sistema.
+4. Consulte o catálogo.
+5. Escolha um livro disponível.
+6. Realize um empréstimo.
+7. Consulte a área Empréstimos.
+8. Faça a devolução.
+9. Confira a atualização da disponibilidade.
+
+### Teste de autorização
+
+Uma conta CLIENTE não pode executar operações exclusivas de ADMIN.
+
+O backend deverá retornar HTTP 403 quando uma requisição administrativa for realizada por um cliente autenticado.
+
+### Credenciais de demonstração
+
+As credenciais de administrador devem ser fornecidas ao professor por um canal privado.
+
+Para testar o perfil de cliente, é possível criar uma nova conta diretamente no sistema.
+
+Nenhuma senha administrativa deve ser publicada neste README.
+
+---
+
+## 16. Atendimento aos requisitos da disciplina
+
+| Requisito obrigatório | Implementação |
+|---|---|
+| Métodos HTTP | GET, POST, PUT, PATCH e DELETE |
+| Códigos HTTP | Respostas de sucesso e erro |
+| Sessões e cookies | express-session |
+| Arquitetura MVC | Models, Controllers e respostas JSON |
+| Persistência | Sequelize ORM e camada DAO |
+| Banco de dados real | PostgreSQL |
+| API REST | Endpoints JSON documentados |
+| CORS | Middleware cors |
+| Frontend funcional | HTML, CSS e JavaScript |
+| Autenticação | Cliente e administrador |
+| Autorização | Middlewares no backend |
+| Deploy | Render |
+| Versionamento | GitHub |
+| Documentação | README.md |
+
+O desenvolvimento contempla os requisitos técnicos previstos no trabalho semestral.
+
+---
+
+## 17. Apresentação do projeto
+
+A apresentação pode ser organizada em até 20 minutos.
+
+### Parte 1 — Introdução (2 minutos)
+
+- Apresentação do BiblioWeb.
+- Problema que o sistema resolve.
+- Objetivos da aplicação.
+
+### Parte 2 — Arquitetura (3 minutos)
+
+- Node.js e Express.
+- Organização MVC.
+- Padrão DAO.
+- Sequelize ORM.
+- PostgreSQL.
+
+### Parte 3 — API REST (3 minutos)
+
+- Métodos HTTP.
+- Rotas.
+- Respostas JSON.
+- Códigos de status.
+- CORS.
+
+### Parte 4 — Demonstração do cliente (5 minutos)
+
+- Cadastro.
+- Login.
+- Consulta ao catálogo.
+- Empréstimo.
+- Devolução.
+
+### Parte 5 — Administração (4 minutos)
+
+- Login do administrador.
+- Cadastro de livros.
+- Edição.
+- Controle de exemplares.
+- Permissões do backend.
+
+### Parte 6 — Publicação e conclusão (3 minutos)
+
+- Repositório GitHub.
+- Hospedagem Render.
+- Banco PostgreSQL.
+- Sessões e cookies.
+- Aprendizados do desenvolvimento.
+
+---
+
+## 18. Segurança e limitações
+
+O projeto implementa mecanismos de segurança adequados ao seu objetivo acadêmico, como autenticação, autorização, hash de senhas e proteção de sessões.
+
+Entretanto, para utilização comercial em larga escala, recomenda-se:
+
+- Implantar proteção CSRF adicional.
+- Configurar limitação de tentativas de login.
+- Realizar auditoria das dependências npm.
+- Atualizar dependências vulneráveis.
+- Implementar migrações versionadas.
+- Ampliar os testes automatizados.
+- Implementar monitoramento e backups.
+- Configurar mecanismos adicionais de recuperação de conta.
+
+A hospedagem gratuita pode apresentar limitações de desempenho, disponibilidade e prazo de armazenamento do banco.
+
+---
+
+## 19. Conclusão
+
+O desenvolvimento do BiblioWeb permitiu aplicar, de forma integrada, os principais conteúdos abordados na disciplina de Programação para Web Avançada.
+
+O projeto demonstra a comunicação entre frontend e backend utilizando HTTP e JSON, a organização do código em camadas, a persistência de dados em banco relacional e o controle de acesso por meio de sessões e permissões.
+
+A publicação da aplicação no Render e o versionamento no GitHub completam o processo de desenvolvimento, desde a implementação local até a disponibilização em servidor remoto.
+
+O BiblioWeb representa uma aplicação acadêmica funcional e documentada, permitindo demonstrar os conceitos técnicos estudados durante o semestre.
+
+---
+
+**Projeto acadêmico desenvolvido para a disciplina de Programação para Web Avançada — UFMS.**
+
+**Repositório:** https://github.com/Wallacewlk/BiblioWeb
+
+**Aplicação:** https://biblioweb-wallace.onrender.com

@@ -1,0 +1,12 @@
+﻿ID requisito;Descricao;IDs casos vinculados;Tipo de evidência
+R01;Cadastro de cliente com dados validos e invalidos;"U06; I03; I04; I05; I06; M01";Automatizado + manual
+R02;Autenticacao e sessao por cookie;"U01; U02; U03; I02; I07; I08";Automatizado
+R03;Acesso restrito a operacoes administrativas;"U04; U05; I09; I11; M02";Automatizado + manual
+R04;Cadastro e alteracao de livros;"U06; U07; U08; U09; U10; U11; U12; U13; I12";Automatizado
+R05;Remocao logica / visibilidade de livro;I19;Automatizado
+R06;Empréstimo apenas com estoque e livro ativo;"U14; U15; U17; I13; I14; M03";Automatizado + manual
+R07;Nao permitir emprestimo duplicado;"U18; I15";Automatizado
+R08;Devolucao autorizada e unica;"U16; U19; U20; I16; I17; I18; M04";Automatizado + manual
+R09;Persistencia e atualizacao de disponibilidade;"U13; I17; M05";Automatizado + manual
+R10;API REST com codigos HTTP;"I01; I02; I03; I04; I05; I06; I08; I09; I12; I14; I16; I18; I19";Automatizado
+R11;Interface funcional e responsiva;"M01; M02; M03; M04; M05; M06";Manual

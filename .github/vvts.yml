@@ -1,0 +1,85 @@
+
+name: BiblioWeb - VVTS CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    env:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: ''
+      DATABASE_SSL: 'false'
+      SESSION_SECRET: chave-exclusiva-ambiente-temporario-ci-2026
+      ADMIN_EMAIL: admin@biblioweb.local
+      ADMIN_PASSWORD: SomenteTesteCI2026!
+      ADMIN_NAME: Administrador CI
+
+    steps:
+      - name: Baixar repositorio
+        uses: actions/checkout@v6
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.19.0'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Preparar ambiente
+        run: mkdir -p data ci-evidence
+
+      - name: Verificar sintaxe
+        run: npm run check
+
+      - name: Testes unitarios e cobertura
+        run: |
+          set -o pipefail
+          npm run test:coverage 2>&1 | tee ci-evidence/coverage.txt
+
+      - name: Instalar Cypress
+        run: npx cypress install
+
+      - name: Testes de integracao e E2E
+        run: |
+          set -euo pipefail
+
+          npm start > ci-evidence/server.txt 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/api/health; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl -fsS http://127.0.0.1:3000/api/health
+
+          npm run test:integration 2>&1 | tee ci-evidence/integration.txt
+
+          npx cypress run --browser chrome 2>&1 | tee ci-evidence/cypress.txt
+
+      - name: Armazenar evidencias
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidencias-vvts
+          path: |
+            ci-evidence/
+            cypress/screenshots/
+          retention-days: 30

@@ -3,6 +3,60 @@ const API = window.location.port === '5500' ? `http://${window.location.hostname
 const $ = (selector) => document.querySelector(selector);
 const state = { user: null, books: [], loans: [], search: '' };
 
+let realtimeSocket = null;
+let reconnectTimer = null;
+let refreshVersion = 0;
+
+function stopRealtime() {
+  clearTimeout(reconnectTimer);
+  const previous = realtimeSocket;
+  realtimeSocket = null;
+  if (previous) previous.close();
+}
+
+function connectRealtime() {
+  stopRealtime();
+
+  if (!state.user) return;
+
+  const url = new URL(API, window.location.href);
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+  url.pathname = '/ws';
+  url.search = '';
+  url.hash = '';
+
+  const socket = new WebSocket(url);
+  realtimeSocket = socket;
+
+  socket.addEventListener('open', () => {
+    console.log('WebSocket conectado');
+    if (socket === realtimeSocket && state.user) {
+      refresh().catch(console.error);
+    }
+  });
+
+  socket.addEventListener('message', (event) => {
+    if (socket !== realtimeSocket || !state.user) return;
+
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === 'catalog-changed') {
+        refresh().catch(console.error);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  socket.addEventListener('close', () => {
+    if (socket !== realtimeSocket) return;
+    realtimeSocket = null;
+    if (state.user) {
+      reconnectTimer = setTimeout(connectRealtime, 2000);
+    }
+  });
+}
+
 function escapeHTML(value) {
   return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 }
@@ -28,11 +82,12 @@ function loggedIn(user) {
   $('#authView').classList.toggle('hidden', Boolean(user));
   $('#appView').classList.toggle('hidden', !user);
   $('#navUser').classList.toggle('hidden', !user);
-  if (!user) return;
+  if (!user) { stopRealtime(); return; }
   $('#hello').textContent = user.name;
   $('#roleBadge').textContent = user.role === 'ADMIN' ? 'Administrador' : 'Cliente';
   document.querySelector('[data-section="admin"]').classList.toggle('hidden', user.role !== 'ADMIN');
   selectSection('catalog');
+  connectRealtime();
 }
 function selectAuthTab(section) {
   document.querySelectorAll('[data-auth-tab]').forEach((btn) => btn.classList.toggle('active', btn.dataset.authTab === section));
@@ -44,7 +99,10 @@ function selectSection(section) {
   ['catalog', 'loans', 'admin'].forEach((key) => $(`#${key}Section`).classList.toggle('hidden', key !== section));
 }
 async function refresh() {
+  const user = state.user;
+  const version = ++refreshVersion;
   const [books, loans] = await Promise.all([api('/books'), api('/loans')]);
+  if (!user || state.user !== user || version !== refreshVersion) return;
   state.books = books;
   state.loans = loans;
   renderStats(); renderBooks(); renderLoans(); renderAdminBooks();

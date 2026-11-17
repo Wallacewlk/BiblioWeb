@@ -8,6 +8,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const routes = require('./routes');
 const { db } = require('./models');
 const seed = require('./services/seed');
+const realtime = require('./services/realtime');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -15,7 +16,20 @@ const production = process.env.NODE_ENV === 'production';
 if (production && (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32)) {
   throw new Error('Defina SESSION_SECRET com pelo menos 32 caracteres na hospedagem.');
 }
-app.use(helmet());
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      connectSrc: [
+        "'self'",
+        ...(production
+          ? ['wss://biblioweb-wallace.onrender.com']
+          : ['ws://localhost:3000', 'ws://127.0.0.1:3000'])
+      ],
+      upgradeInsecureRequests: production ? [] : null
+    }
+  }
+}));
 app.use(express.json({ limit: '20kb' }));
 
 const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5500,http://127.0.0.1:5500')
@@ -36,12 +50,26 @@ app.use('/api', cors((req, callback) => {
   });
 }));
 const store = new SequelizeStore({ db, tableName: 'Sessions', checkExpirationInterval: 15 * 60 * 1000, expiration: 24 * 60 * 60 * 1000 });
-app.use(session({
+const sessionMiddleware = session({
   name: 'biblioweb.sid',
   secret: process.env.SESSION_SECRET || 'CHAVE-APENAS-PARA-TESTES-LOCAIS-MUDE-ESTA-CHAVE',
   resave: false, saveUninitialized: false, store,
   cookie: { httpOnly: true, secure: production, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 }
-}));
+});
+app.use(sessionMiddleware);
+
+app.use('/api', (req, res, next) => {
+  const mutation = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
+  if (mutation && /^\/(books|loans)(\/|$)/.test(req.path)) {
+    res.once('finish', () => {
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        realtime.broadcast();
+      }
+    });
+  }
+  next();
+});
+
 app.use('/api', routes);
 app.use(express.static(path.join(__dirname, '../public')));
 app.get('/', (_, res) => res.sendFile(path.join(__dirname, '../public/index.html')));
@@ -61,10 +89,11 @@ async function start() {
   await store.sync();
   await seed();
   const port = Number(process.env.PORT) || 3000;
-  app.listen(port, '0.0.0.0', () => {
+  const server = app.listen(port, '0.0.0.0', () => {
     console.log(`BiblioWeb iniciado em http://localhost:${port}`);
     console.log(`API: http://localhost:${port}/api/health`);
   });
+  realtime.attach(server, sessionMiddleware, allowedOrigins);
 }
 if (require.main === module) start().catch((error) => { console.error('Falha ao iniciar:', error); process.exit(1); });
 module.exports = { app, start };

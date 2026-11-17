@@ -972,3 +972,15 @@ O BiblioWeb representa uma aplicação acadêmica funcional e documentada, permi
 **Repositório:** https://github.com/Wallacewlk/BiblioWeb
 
 **Aplicação:** https://biblioweb-wallace.onrender.com
+
+
+## Funcionalidades adicionais — Bonificação
+
+- WebSocket utilizando a biblioteca `ws`.
+- Atualização do estoque de livros em tempo real.
+- Comunicação entre servidor e clientes autenticados.
+- Reconexão automática do WebSocket.
+- Portfólio pessoal publicado no GitHub Pages.
+- Divulgação do projeto no LinkedIn. https://lnkd.in/p/dgTAuekt
+
+**Portfólio:** https://wallacewlk.github.io/

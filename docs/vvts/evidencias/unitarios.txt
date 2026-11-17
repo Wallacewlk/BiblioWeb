@@ -1,23 +1,23 @@
-✔ U01 - usuario sem sessao recebe 401 (1.0566ms)
-✔ U02 - sessao com usuario inexistente recebe 401 (0.466ms)
-✔ U03 - sessao valida injeta req.user (0.1688ms)
-✔ U04 - cliente nao passa no middleware administrativo (0.1701ms)
-✔ U05 - administrador passa no middleware administrativo (0.1703ms)
-✔ U06 - titulo vazio causa erro 400 (0.2499ms)
-✔ U07 - quantidade negativa causa erro 400 (limite inferior) (0.1379ms)
-✔ U08 - zero exemplares e aceito (limite inferior valido) (0.1939ms)
-✔ U09 - 9999 exemplares e aceito (limite superior valido) (0.1735ms)
-✔ U10 - 10000 exemplares e rejeitado (limite superior invalido) (0.2365ms)
-✔ U11 - totalCopies decimal e rejeitado (0.1343ms)
-✔ U12 - nao deixa reduzir total abaixo dos exemplares emprestados (0.172ms)
-✔ U13 - atualiza disponibilidade quando altera quantidade total (0.1491ms)
-✔ U14 - bookId ausente e rejeitado com 400 (0.7325ms)
-✔ U15 - bookId fracionario e rejeitado com 400 (0.1288ms)
-✔ U16 - ID de devolucao invalido causa 400 (0.1735ms)
-✔ U17 - livro indisponivel causa conflito 409 (0.4651ms)
-✔ U18 - emprestimo duplicado causa conflito 409 (0.2832ms)
-✔ U19 - cliente nao devolve emprestimo de outra pessoa (403) (0.276ms)
-✔ U20 - devolucao repetida retorna conflito 409 (0.2068ms)
+✔ U01 - usuario sem sessao recebe 401 (0.7795ms)
+✔ U02 - sessao com usuario inexistente recebe 401 (0.3297ms)
+✔ U03 - sessao valida injeta req.user (0.1677ms)
+✔ U04 - cliente nao passa no middleware administrativo (0.1659ms)
+✔ U05 - administrador passa no middleware administrativo (0.1705ms)
+✔ U06 - titulo vazio causa erro 400 (0.2527ms)
+✔ U07 - quantidade negativa causa erro 400 (limite inferior) (0.1358ms)
+✔ U08 - zero exemplares e aceito (limite inferior valido) (0.1946ms)
+✔ U09 - 9999 exemplares e aceito (limite superior valido) (0.1904ms)
+✔ U10 - 10000 exemplares e rejeitado (limite superior invalido) (0.1787ms)
+✔ U11 - totalCopies decimal e rejeitado (0.1066ms)
+✔ U12 - nao deixa reduzir total abaixo dos exemplares emprestados (0.1627ms)
+✔ U13 - atualiza disponibilidade quando altera quantidade total (0.1403ms)
+✔ U14 - bookId ausente e rejeitado com 400 (0.6945ms)
+✔ U15 - bookId fracionario e rejeitado com 400 (0.1428ms)
+✔ U16 - ID de devolucao invalido causa 400 (0.1687ms)
+✔ U17 - livro indisponivel causa conflito 409 (0.4586ms)
+✔ U18 - emprestimo duplicado causa conflito 409 (0.2992ms)
+✔ U19 - cliente nao devolve emprestimo de outra pessoa (403) (0.2731ms)
+✔ U20 - devolucao repetida retorna conflito 409 (0.2003ms)
 ℹ tests 20
 ℹ suites 0
 ℹ pass 20
@@ -25,4 +25,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 266.7371
+ℹ duration_ms 251.4321

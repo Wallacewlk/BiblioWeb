@@ -1,10 +1,12 @@
-# Evidências do trabalho VV&TS
+# Índice de evidências
 
-As imagens `historico_*.png` documentam eventos da primeira rodada de desenvolvimento do BiblioWeb (12/11/2026), não os resultados dos novos testes.
+- `unitarios.txt`, `integracao.txt`: registros iniciais/reexecuções conforme os arquivos locais; preserve os históricos.
+- `regressao/`: logs brutos copiados na reexecução em 17/11 e capturas Cypress locais, quando presentes.
+- `cobertura/`: relatórios brutos inicial e final, quando presentes.
+- `comprovantes-2026-11-17/`: capturas reais e explicação das evidências manuais e de CI.
+- `historico_smoke_2026-11-12.png` e `historico_render_live_2026-11-12.png`: evidências de eventos distintos.
 
-Após executar `executar-vvts.cmd`, serão gerados:
+Verificar conteúdo de logs e capturas antes de publicar: nenhuma senha real, token, cookie ou URL privada. Não tratar deploy Live como teste da base PostgreSQL.
 
-- `unitarios.txt`: resultado real dos testes unitários.
-- `integracao.txt`: resultado real dos testes HTTP e banco SQLite local.
-
-Não publique senhas, `.env`, cookies de sessão, `DATABASE_URL`, tokens, IPs privados ou informações pessoais desnecessárias.
+- `historico-2026-11-12/`: cópias preservadas dos logs e capturas originais da entrega anterior.
+- Os arquivos `*-extrato-terminal.txt` são recortes do texto do terminal disponibilizado em 17/11, não substituem logs brutos.

@@ -1,0 +1,29 @@
+▶ I01-I19 - Fluxo de API, sessoes e persistencia REAL
+  ✔ I01 - API responde health 200 (25.5563ms)
+  ✔ I02 - visitante nao consulta catalogo (401) (2.8127ms)
+  ✔ I03 - nome com um caracter e invalido (400) (19.5507ms)
+  ✔ I04 - senha de sete caracteres e invalida (400) (2.532ms)
+  ✔ I05 - cadastrar cliente gera sessao (201) (123.9869ms)
+  ✔ I06 - e-mail duplicado retorna conflito (409) (4.7216ms)
+  ✔ I07 - cookie identifica cliente (200) (6.8205ms)
+  ✔ I08 - senha incorreta nao autentica (401) (102.381ms)
+  ✔ I09 - cliente nao cadastra livros (403) (8.8284ms)
+  ✔ I10 - cadastrar segundo cliente (120.7808ms)
+  ✔ I11 - autenticar admin (111.4858ms)
+  ✔ I12 - admin cadastra livro de 1 exemplar (10.6903ms)
+  ✔ I13 - cliente A empresta o livro (201) (14.9608ms)
+  ✔ I14 - cliente B nao empresta exemplar esgotado (409) (10.1691ms)
+  ✔ I15 - cliente A nao duplica emprestimo (409) (8.4049ms)
+  ✔ I16 - cliente B nao devolve emprestimo de A (403) (7.2723ms)
+  ✔ I17 - cliente A devolve e estoque retorna a 1 (18.6325ms)
+  ✔ I18 - devolucao repetida e recusada (409) (6.6751ms)
+  ✔ I19 - admin desativa; cliente nao ve livro (404) (18.5042ms)
+✔ I01-I19 - Fluxo de API, sessoes e persistencia REAL (626.6213ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 676.8108

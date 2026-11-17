@@ -1,0 +1,77 @@
+EXTRATO DO TERMINAL FORNECIDO PELO EXECUTOR — 17/11/2026
+
+(Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        16.3.0                                                                         │
+  │ Browser:        Electron 150 (headless) (deprecated)                                           │
+  │ Node Version:   v24.19.0 (C:\Program Files\nodejs\node.exe)                                    │
+  │ Specs:          1 found (biblioweb.cy.js)                                                      │
+  │ Searched:       cypress/e2e/**/*.cy.js                                                         │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Warning: The Electron browser is deprecated as a test browser and will be removed in a future version of Cypress.
+
+Switch to Chrome or another installed browser to avoid a breaking change when you upgrade.
+
+Read more about supported browsers: https://on.cypress.io/launching-browsers
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  biblioweb.cy.js                                                                 (1 of 1)
+
+
+  BiblioWeb - VVTS com Cypress (localhost)
+    √ E01 - cliente se cadastra e permanece autenticado apos atualizar a pagina (2398ms)
+    √ E02 - cliente nao enxerga Administracao nem pode cadastrar pela API (403) (930ms)
+    √ E03 - login com credenciais incorretas e recusado (358ms)
+    √ E04 - cliente empresta, devolve e ve a devolucao apos refresh (1409ms)
+    √ E05 - administrador cadastra, edita, persiste e desativa livro (1952ms)
+    √ E06 - cadastro acessivel em largura de celular (258ms)
+
+
+  6 passing (7s)
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        6                                                                                │
+  │ Passing:      6                                                                                │
+  │ Failing:      0                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  6                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     7 seconds                                                                        │
+  │ Spec Ran:     biblioweb.cy.js                                                                  │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\wallace\Documents\BiblioWeb\cypress\screenshots\biblioweb.cy.js\E01-cli    (1280x1190)
+     ente-autenticado.png                                                                           
+  -  C:\Users\wallace\Documents\BiblioWeb\cypress\screenshots\biblioweb.cy.js\E02-per    (1280x1190)
+     missoes-cliente.png                                                                            
+  -  C:\Users\wallace\Documents\BiblioWeb\cypress\screenshots\biblioweb.cy.js\E04-emp     (1280x802)
+     restimo.png                                                                                    
+  -  C:\Users\wallace\Documents\BiblioWeb\cypress\screenshots\biblioweb.cy.js\E04-dev     (1280x798)
+     olucao.png                                                                                     
+  -  C:\Users\wallace\Documents\BiblioWeb\cypress\screenshots\biblioweb.cy.js\E05-adm    (1280x1557)
+     inistracao.png                                                                                 
+  -  C:\Users\wallace\Documents\BiblioWeb\cypress\screenshots\biblioweb.cy.js\E06-lay      (390x969)
+     out-mobile.png                                                                                 
+
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ √  biblioweb.cy.js                          00:07        6        6        -        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    √  All specs passed!                        00:07        6        6        -        -        -

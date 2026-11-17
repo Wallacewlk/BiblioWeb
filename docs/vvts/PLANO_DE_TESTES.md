@@ -5,9 +5,9 @@
 **Aplicação:** BiblioWeb — Sistema de Biblioteca  
 **Repositório:** https://github.com/Wallacewlk/BiblioWeb  
 **URL de demonstração:** https://biblioweb-wallace.onrender.com  
-**Versão de referência:** preencher o hash do commit testado (`git rev-parse --short HEAD`).
+**Versões de referência:** 2369696 (base), c090365 (regressão), ea93de8 (testes estruturais), 06c8e87 (CI).
 
-> **Situação:** plano e casos especificados; resultados dos **novos** testes dependem de execução local. A aprovação do `npm run smoke` em 12/11/2026 é evidência histórica distinta e não comprova automaticamente estes novos testes.
+> **Atualização de 17/11/2026:** 40 unitários (20 originais + 20 caixa-branca), 19 de integração/API, 6 E2E e 6 manuais: **71 aprovados, 0 falhas nas execuções documentadas**. Cobertura e CI medidos; riscos remanescentes descritos.
 
 ## 1. Objetivo e distinção entre verificação e validação
 
@@ -26,7 +26,7 @@
 7. Códigos HTTP e respostas JSON da API.
 8. Integração frontend, Express e SQLite local (PostgreSQL em produção). 
 
-**Fora do escopo da suíte automática inicial:** carga massiva, infraestrutura do Render, qualidade de interface em todos os navegadores, acessibilidade integral e exploração de segurança invasiva. Essas dimensões exigem estratégia adicional e não devem ser declaradas aprovadas sem evidências.
+**Fora do escopo da suíte automatizada:** carga massiva, infraestrutura do Render, qualidade de interface em todos os navegadores, acessibilidade integral e exploração de segurança invasiva. Essas dimensões exigem estratégia adicional e não devem ser declaradas aprovadas sem evidências.
 
 ## 3. Estratégia e níveis de teste
 
@@ -36,10 +36,13 @@
 | Integração | `node:test` + `fetch` HTTP real | Express + sessão + SQLite local | `evidencias/integracao.txt` |
 | Funcional/caixa-preta | Partição de equivalência e valores-limite | API e interface | casos documentados e capturas |
 | API REST | `fetch` e códigos HTTP | servidor local | respostas 200, 201, 400, 401, 403, 404, 409 |
-| Regressão | Reexecução da suíte após alteração | ambiente local | logs comparáveis antes/depois |
+| E2E em navegador | `Cypress 16.3.0` | Browser Electron + Express + SQLite local | `evidencias/cypress-6-aprovados.png` |
+| Caixa-branca | node:test, assert, mocks e cobertura V8 | controllers | coverage-final.txt |
+| Integração contínua | GitHub Actions | Ubuntu, SQLite, Chrome | runs #1 e #2 |
+| Regressão | Reexecução após alteração | ambiente local | logs comparáveis antes/depois |
 | Validação manual | Navegador | local ou Render | roteiro e capturas de tela |
 
-**Observação:** o `npm run smoke` já presente no BiblioWeb é um teste automatizado ponta a ponta da API, mas não substitui testes unitários isolados nem análise formal de técnicas.
+**Observação:** o Cypress verifica fluxos reais pela interface e usa `cy.env()` para carregar credenciais administrativas locais por configuração segura. O `npm run smoke` já presente no BiblioWeb é um teste automatizado ponta a ponta da API, mas não substitui testes unitários isolados nem análise formal de técnicas.
 
 ## 4. Ambiente e preparação
 
@@ -64,13 +67,16 @@ Abra um **segundo** CMD e execute:
 executar-vvts.cmd
 ```
 
-Arquivos de evidência previstos: `docs/vvts/evidencias/unitarios.txt` e `docs/vvts/evidencias/integracao.txt`.
+Evidências: `docs/vvts/evidencias/unitarios.txt`, `docs/vvts/evidencias/integracao.txt` e `docs/vvts/evidencias/cypress-6-aprovados.png`.
+
+Para reproduzir os testes E2E, mantenha `npm.cmd start` ativo no terminal PowerShell e execute, em outro terminal, `npx.cmd cypress open --e2e --browser electron`. Escolha `biblioweb.cy.js`. Execute **apenas** com SQLite local e sem `DATABASE_URL`.
 
 Se preferir executar separadamente:
 
 ```cmd
-node --test tests/unit/auth-and-books.test.js tests/unit/loans.test.js
-node --test tests/integration/api.test.js
+npm run test:coverage
+npm run test:integration
+npm run test:e2e
 ```
 
 ## 5. Critérios de entrada
@@ -132,8 +138,8 @@ No controller de livros, `totalCopies` deve ser inteiro entre 0 e 9999, inclusiv
 
 - Testes com mocks comprovam decisões do controller isolado, não substituem teste real de transações SQL.
 - Os testes HTTP usam banco local SQLite; ambiente de produção usa PostgreSQL. É necessário documentar essa diferença.
-- Não há, neste pacote inicial, medição quantitativa de cobertura de linhas/ramificações nem automação da interface por navegador. Esses pontos podem integrar os bônus posteriormente.
-- Casos manuais e novos testes **não podem ser marcados como aprovados até execução**.
+- Há Cypress e CI confirmados. A cobertura V8 (91,98% linhas; 91,95% ramificações; 54,17% funções) refere-se somente aos módulos carregados pela suíte unitária; não inclui todo o frontend, todas as rotas nem o servidor separado. DAOs simulados justificam a baixa cobertura de funções.
+- M01–M06 executados em 17/11; estados visuais capturados, com confirmação do executor para cadastro, refresh e navegação móvel. A aprovação é por caso único, não por soma de reexecuções.
 - Dependências com alertas de auditoria devem ser avaliadas com `npm audit`; não executar `npm audit fix --force` sem revisar as mudanças.
 
 ## 9. Responsabilidades e registro

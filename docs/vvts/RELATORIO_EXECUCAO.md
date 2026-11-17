@@ -1,74 +1,36 @@
-# Relatório de execução e defeitos — BiblioWeb / VV&TS
+# Relatório consolidado de execução — BiblioWeb / VV&TS
 
-**Importante:** documento de trabalho a completar com resultados REAIS. A nova suíte de testes fornecida está especificada, mas ainda não foi executada no computador do grupo.
+Atualização: 17/11/2026. UFMS — Verificação, Validação e Teste de Software.
 
-## Identificação da execução
+## Resultado por caso único
 
-| Campo | Preencher |
-|---|---|
-| Executor(es) | A preencher |
-| Data/hora | A preencher |
-| Commit Git | A preencher (`git rev-parse --short HEAD`) |
-| Node.js | A preencher (`node -v`) |
-| Sistema operacional | A preencher |
-| Banco | SQLite local (ou detalhar outro ambiente) |
-| Comando de execução | `executar-vvts.cmd` |
-| Evidência unitária | `evidencias/unitarios.txt` |
-| Evidência integração | `evidencias/integracao.txt` |
+| Categoria | IDs | Executados | Aprovados | Reprovados |
+|---|---|---:|---:|---:|
+| Unitários originais | U01–U20 | 20 | 20 | 0 |
+| Unitários estruturais | W01–W20 | 20 | 20 | 0 |
+| Integração/API | I01–I19 | 19 | 19 | 0 |
+| E2E Cypress | E01–E06 | 6 | 6 | 0 |
+| Manuais | M01–M06 | 6 | 6 | 0 |
+| Total | | 71 | 71 | 0 |
 
-## Resultado consolidado
+65 automatizados + 6 manuais. O agrupador I01–I19 é contado pelo runner, mas não é um cenário adicional. Reexecuções não são somadas como casos distintos. Taxa de aprovação: 100% dos casos avaliados; não significa ausência de defeitos ou cobertura integral.
 
-| Categoria | Casos especificados | Executados | Aprovados | Reprovados | Bloqueados |
-|---|---:|---:|---:|---:|---:|
-| Unitários | 20 | A preencher | A preencher | A preencher | A preencher |
-| Integração | 19 | A preencher | A preencher | A preencher | A preencher |
-| Validação manual | 6 | A preencher | A preencher | A preencher | A preencher |
-| **Total** | **45** | A preencher | A preencher | A preencher | A preencher |
+## Histórico e versões
 
-**Fórmula de aprovação:** `100 × aprovados / executados` (quando houver casos executados). Registrar também os bloqueados; não confundir caso não executado com aprovado.
+- 12/11: U01–U20 e I01–I19 aprovados; hash da execução inicial não registrado nos logs originais.
+- 16/11: E01–E06 aprovados; código Cypress no commit c090365.
+- 17/11: regressão em c090365 (45 automatizados aprovados), após inclusão de Cypress e dependências; M01–M06 executados no Brave local e confirmados pelo executor.
+- 17/11: W01–W20 adicionados, 40 unitários aprovados com cobertura; suíte publicada em ea93de8. Cobertura inicial 81,13% linhas / 78,79% ramificações / 37,50% funções; final 91,98% / 91,95% / 54,17%.
+- 17/11: workflow corrigido no commit 06c8e87; execução automática #1 e manual #2 concluídas com sucesso no GitHub Actions (1m10s e 1m06s). Terceira execução não contabilizada; estava em andamento na captura.
 
-## Evidência já disponível, anterior à nova suíte
+## Evidências e rastreabilidade
 
-- `historico_smoke_2026-11-12.png`: print do terminal com `SUCESSO: todos os testes de fumaça foram aprovados` na configuração local. **Não comprova os 39 novos testes automatizados.**
-- `historico_render_live_2026-11-12.png`: print da implantação marcada `Deploy succeeded | Live` no Render. **Não comprova execução da nova suíte**.
-- Os registros da conversa sobre deploy identificam duas falhas de configuração de produção: `DATABASE_URL` inválida e `SESSION_SECRET` com tamanho insuficiente. A mensagem de erro e o procedimento de correção devem ser documentados separadamente caso sejam citados como defeitos.
+Consultar CASOS_DE_TESTE.md, MATRIZ_RASTREABILIDADE.csv, RELATORIO_REGRESSAO.md, REGISTRO_DE_DEFEITOS.md, RELATORIO_TESTES_MANUAIS.md e RELATORIO_COBERTURA_CI.md. As capturas reunidas em evidencias/comprovantes-2026-11-17/ são prova visual das execuções; os logs brutos locais devem permanecer nas pastas regressao/ e cobertura/. Os prints manuais mostram estados observados; o executor confirmou cadastro novo, recarregamento e interações em viewport móvel.
 
-## Registro de ocorrências históricas (não inventar defeitos novos)
+## Conclusão e limitações
 
-| ID | Tipo | Condição | Esperado | Observado | Situação conhecida | Evidência |
-|---|---|---|---|---|---|---|
-| OC-01 | Configuração de deploy | `DATABASE_URL` incorreta | Conectar ao PostgreSQL | Sequelize falhou ao interpretar URL (`null.replace`) | Corrigida pela configuração da URL interna no Render | Log do deploy inicial; anexar sem credenciais |
-| OC-02 | Configuração de deploy | `SESSION_SECRET` ausente/curta | Iniciar servidor seguro em produção | Erro exigindo 32 caracteres | Corrigida; deploy chegou a Live | Log do deploy inicial; anexar sem segredos |
-| OC-03 | Comportamento de inicialização admin | Senha alterada após o registro inicial | Login com senha definida para demonstração | Login recusado; exigiu alteração em `seed.js` | Usuário confirmou que passou a funcionar após a correção | Histórico de alteração/commit; revalidar |
-| OC-04 | Segurança de dependências | `npm install` no deploy | Dependências sem vulnerabilidades conhecidas | `npm audit` reportou 10 alertas, sendo um crítico | **Pendente de análise**; não presumir correção | Logs de build; `npm audit` atualizado |
+Aprovado para o escopo testado, com ressalvas: SQLite isolado, PostgreSQL de produção não avaliado por esta suíte; cobertura limitada aos módulos carregados por unitários e DAOs simulados; sem auditoria integral de acessibilidade, desempenho ou segurança. Dez alertas npm observados permanecem abertos para triagem (2 baixos, 3 moderados, 4 altos, 1 crítico). Não há prova de exploração ou de correção desses alertas. A aprovação dos testes não elimina tais riscos. Erros de configuração e de automação foram registrados separadamente de defeitos funcionais.
 
-> Separar **defeito de aplicação** de **erro de configuração** e de **risco de dependência**. Não contabilizar todos como bugs funcionais. Preencher severidade, reprodutibilidade e evidência conforme o relatório da disciplina.
-
-## Teste de regressão
-
-1. Anotar o commit antes da mudança.
-2. Executar `executar-vvts.cmd` e guardar os logs.
-3. Corrigir o defeito em branch/commit identificado.
-4. Repetir exatamente o comando e comparar os casos.
-5. Atualizar os casos de teste, defeitos e situação pós-correção.
-
-| Correção / commit | Casos repetidos | Antes | Depois | Evidência |
-|---|---|---|---|---|
-| A preencher | A preencher | A preencher | A preencher | A preencher |
-
-## Análise e conclusão (preencher após executar)
-
-- **Passaram:** a preencher.
-- **Falharam:** a preencher (incluindo código/causa do erro).
-- **Não executados ou limitações:** a preencher.
-- **Riscos remanescentes:** auditoria de dependências e diferenças SQLite/PostgreSQL.
-- **Decisão de saída:** Aprovado / Aprovado com ressalvas / Reprovado (justificar).
-
-## Bônus não presumidos
-
-- Cobertura de código: **não medida nesta primeira versão**.
-- Automação de fluxo visual completo com Playwright/Cypress: **não implementada**.
-- CI com GitHub Actions: **não implementada**.
-- Integração com ferramenta de gestão de defeitos: **não implementada**.
-
-Caso sejam implementados, anexar relatórios e evidências.
+Repositório: https://github.com/Wallacewlk/BiblioWeb
+CI: https://github.com/Wallacewlk/BiblioWeb/actions/workflows/vvts.yml
+Aplicação: https://biblioweb-wallace.onrender.com

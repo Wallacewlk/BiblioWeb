@@ -1,0 +1,67 @@
+EXTRATO DO TERMINAL FORNECIDO PELO EXECUTOR — 17/11/2026
+Não é o arquivo bruto gerado pelo script; preserva o texto enviado, incluindo caracteres de codificação.
+
+VVTS - TESTES UNITARIOS (sem servidor)
+==========================================
+Ô£ö U01 - usuario sem sessao recebe 401 (0.7795ms)
+Ô£ö U02 - sessao com usuario inexistente recebe 401 (0.3297ms)
+Ô£ö U03 - sessao valida injeta req.user (0.1677ms)
+Ô£ö U04 - cliente nao passa no middleware administrativo (0.1659ms)
+Ô£ö U05 - administrador passa no middleware administrativo (0.1705ms)
+Ô£ö U06 - titulo vazio causa erro 400 (0.2527ms)
+Ô£ö U07 - quantidade negativa causa erro 400 (limite inferior) (0.1358ms)
+Ô£ö U08 - zero exemplares e aceito (limite inferior valido) (0.1946ms)
+Ô£ö U09 - 9999 exemplares e aceito (limite superior valido) (0.1904ms)
+Ô£ö U10 - 10000 exemplares e rejeitado (limite superior invalido) (0.1787ms)
+Ô£ö U11 - totalCopies decimal e rejeitado (0.1066ms)
+Ô£ö U12 - nao deixa reduzir total abaixo dos exemplares emprestados (0.1627ms)
+Ô£ö U13 - atualiza disponibilidade quando altera quantidade total (0.1403ms)
+Ô£ö U14 - bookId ausente e rejeitado com 400 (0.6945ms)
+Ô£ö U15 - bookId fracionario e rejeitado com 400 (0.1428ms)
+Ô£ö U16 - ID de devolucao invalido causa 400 (0.1687ms)
+Ô£ö U17 - livro indisponivel causa conflito 409 (0.4586ms)
+Ô£ö U18 - emprestimo duplicado causa conflito 409 (0.2992ms)
+Ô£ö U19 - cliente nao devolve emprestimo de outra pessoa (403) (0.2731ms)
+Ô£ö U20 - devolucao repetida retorna conflito 409 (0.2003ms)
+Ôä╣ tests 20
+Ôä╣ suites 0
+Ôä╣ pass 20
+Ôä╣ fail 0
+Ôä╣ cancelled 0
+Ôä╣ skipped 0
+Ôä╣ todo 0
+Ôä╣ duration_ms 251.4321
+
+==========================================
+VVTS - TESTES DE INTEGRACAO
+Inicie npm start em OUTRO terminal antes de continuar.
+==========================================
+ÔûÂ I01-I19 - Fluxo de API, sessoes e persistencia REAL
+  Ô£ö I01 - API responde health 200 (25.5563ms)
+  Ô£ö I02 - visitante nao consulta catalogo (401) (2.8127ms)
+  Ô£ö I03 - nome com um caracter e invalido (400) (19.5507ms)
+  Ô£ö I04 - senha de sete caracteres e invalida (400) (2.532ms)
+  Ô£ö I05 - cadastrar cliente gera sessao (201) (123.9869ms)
+  Ô£ö I06 - e-mail duplicado retorna conflito (409) (4.7216ms)
+  Ô£ö I07 - cookie identifica cliente (200) (6.8205ms)
+  Ô£ö I08 - senha incorreta nao autentica (401) (102.381ms)
+  Ô£ö I09 - cliente nao cadastra livros (403) (8.8284ms)
+  Ô£ö I10 - cadastrar segundo cliente (120.7808ms)
+  Ô£ö I11 - autenticar admin (111.4858ms)
+  Ô£ö I12 - admin cadastra livro de 1 exemplar (10.6903ms)
+  Ô£ö I13 - cliente A empresta o livro (201) (14.9608ms)
+  Ô£ö I14 - cliente B nao empresta exemplar esgotado (409) (10.1691ms)
+  Ô£ö I15 - cliente A nao duplica emprestimo (409) (8.4049ms)
+  Ô£ö I16 - cliente B nao devolve emprestimo de A (403) (7.2723ms)
+  Ô£ö I17 - cliente A devolve e estoque retorna a 1 (18.6325ms)
+  Ô£ö I18 - devolucao repetida e recusada (409) (6.6751ms)
+  Ô£ö I19 - admin desativa; cliente nao ve livro (404) (18.5042ms)
+Ô£ö I01-I19 - Fluxo de API, sessoes e persistencia REAL (626.6213ms)
+Ôä╣ tests 20
+Ôä╣ suites 0
+Ôä╣ pass 20
+Ôä╣ fail 0
+Ôä╣ cancelled 0
+Ôä╣ skipped 0
+Ôä╣ todo 0
+Ôä╣ duration_ms 676.8108
